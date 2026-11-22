@@ -839,3 +839,6 @@ body.red-page {
 
 /* footer base: no tab background (D121) */
 .ft7-base { background: transparent; }
+
+/* about tables: recognition is 2 columns (one line each); experience role column wider (D122) */
+@media (min-width: 900px) { #exp > div { grid-template-columns: 14ch 1.45fr 1fr; } #rec > div { grid-template-columns: 14ch 1fr; } }
