@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact | Kamil Siddiqui</title>
+<meta name="description" content="Contact Kamil Siddiqui, mechanical design engineer in Karachi, Pakistan.">
+<meta property="og:title" content="Contact | Kamil Siddiqui">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D8261D'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body class="red-page" data-page="contact" data-base="">
+<header id="hd"></header>
+<main class="ct on-red">
+  <div class="box">
+    <a class="ct-head" href="#form" aria-label="Inquire, go to the form"><span class="big split" aria-hidden="true">Inquire</span><span class="arr" aria-hidden="true">&#8599;</span></a>
+    <div class="ct-grid">
+      <dl class="ct-info rise">
+        <div><dt>Email</dt><dd><a href="mailto:kamil_siddiqui2002@hotmail.com">kamil_siddiqui2002@hotmail.com</a></dd></div>
+        <div><dt>Based in</dt><dd>Karachi, Pakistan (PKT, UTC+5)</dd></div>
+        <div><dt>My time right now</dt><dd class="clockbig" id="clock12">--:--:-- PKT</dd><p class="clocksub" id="clock24">--:-- · UTC+5</p></div>
+        <div><dt>Response time</dt><dd>Within 24 hours, usually much faster</dd></div>
+        <div><dt>Prefer LinkedIn?</dt><dd><a href="https://www.linkedin.com/in/kamil-siddiqui-me/" rel="noopener">Message me on LinkedIn &#8594;</a></dd></div>
+      </dl>
+      <form class="ct-form rise" id="form" action="https://formspree.io/f/xdegwvyl" method="POST" novalidate>
+        <div class="fld"><label for="f-name">Name*</label><input id="f-name" name="name" autocomplete="name" placeholder="Your name" required><span class="err">Please enter your name</span></div>
+        <div class="fld"><label for="f-email">Email*</label><input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@university.edu" required><span class="err">Please enter a valid email address</span></div>
+        <div class="fld"><label for="f-topic">Topic*</label>
+          <select id="f-topic" name="topic" required><option value="">Select a topic</option><option>Work together on a design project</option><option>Analysis or simulation work</option><option>Research collaboration</option><option>Graduate admissions</option><option>Something else</option></select>
+          <span class="err">Please pick a topic</span></div>
+        <div class="fld"><label for="f-msg">Message*</label><textarea id="f-msg" name="message" placeholder="What would you like to work on together? A few sentences help." required></textarea><span class="err">Please write a short message</span></div>
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute; left:-9999px" aria-hidden="true">
+        <div id="submit-slot"></div>
+        <div class="ct-state" id="st-sending" role="status"><b>Sending</b>Your message is on its way.</div>
+        <div class="ct-state" id="st-ok" role="status"><b>Received</b>Thank you. Your message is in.</div>
+        <div class="ct-state" id="st-err" role="alert"><b>That did not go through</b>Something failed on the way. Try again in a minute, or reach me on LinkedIn.</div>
+      </form>
+    </div>
+  </div>
+</main>
+<footer id="ft"></footer>
+<script src="js/site-data.js"></script>
+<script src="js/site.js"></script>
+<script src="js/fx.js" defer></script>
+</body>
+</html>

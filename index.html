@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kamil Siddiqui | Engineering Portfolio</title>
+<meta name="description" content="Engineering portfolio of Kamil Siddiqui, mechanical design engineer in Karachi, Pakistan: case studies and projects in design, prototyping, analysis and systems design, 2023 to 2026.">
+<meta property="og:title" content="Kamil Siddiqui | Engineering Portfolio">
+<meta property="og:description" content="Selected design, prototyping and simulation projects, 2023 to 2026.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D8261D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body data-page="home" data-base="">
+<a class="skip" href="#work">Skip to projects</a>
+<header id="hd"></header>
+
+<section class="h7" id="top">
+  <div class="box">
+    <div class="h7-grid">
+      <div>
+        <div class="h6-crumb rise" style="margin-top:0"><span class="dot open"><span class="mk" aria-hidden="true">.</span><span class="lb"><span>Portfolio</span></span></span><span class="xs dim">Selected projects, 2023 to 2026. Karachi, Pakistan.</span></div>
+        <h1 id="hook" class="rise" style="--d:120ms"></h1>
+        <div class="cta rise" style="--d:260ms" id="hero-cta"></div>
+      </div>
+      <div class="h7-globe">
+        <canvas class="globe" id="globe" aria-label="Globe of the 26 countries Kamil's clients are in. The list further down gives the same data."></canvas>
+        <p class="note gnote"><b>View</b>Orthographic, from Karachi<br>Drag to rotate<br>Hover a country</p>
+      </div>
+    </div>
+    <div class="h7-word">
+      <div class="tucks rise"><div class="exp"><p class="xs"><b>Design</b>Additive manufacturing<br>Design for manufacturing<br>Mechanisms<br>Reverse engineering</p><p class="xs"><b>Analysis</b>Structural analysis (FEA)<br>Thermal and fluid systems<br>Control systems<br>Energy systems</p></div><p class="xs r">PK<br>Karachi, 24.86° N, 67.00° E</p></div>
+      <span class="big split" aria-hidden="true">Portfolio</span>
+      <div class="dimline" aria-label="Projects from 2023 to 2026"><span class="xs lab">2023 to 2026</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="box cut" id="about"><span class="xs dim">About</span><span class="hatch" aria-hidden="true"></span></div>
+<section class="box stmt">
+  <p class="big-p rise">I design parts for the way they will be <em>made</em>. Modeled for the machine and the print bed, checked in simulation, tested on the bench and revised until the numbers agree. One engineer, from first sketch to finished part.</p>
+  <div class="row rise" style="display:flex; gap: var(--s3)" id="about-cta"></div>
+</section>
+
+<section class="box creds" aria-label="Credentials">
+  <p class="cred-line rise"><span>CSWP</span><span class="lbl">Certified SOLIDWORKS Professional,<br>2025</span></p>
+  <p class="cred-line rise"><span>Gold Medalist</span><span class="lbl">Chancellor's Gold Medal,<br>B.E. Mechanical Engineering,<br>DHA Suffa University, 2024</span></p>
+  <p class="cred-line rise"><span><span class="r"><span id="count">0</span>+</span> Projects</span><span class="lbl">Delivered for clients<br>in 26 countries</span></p>
+  <p class="cred-line rise"><span><span class="r">5+</span> Years</span><span class="lbl">Of design work,<br>freelance since 2021</span></p>
+</section>
+
+<div class="box cut"><span class="xs dim">Clients</span><span class="hatch" aria-hidden="true"></span></div>
+<section class="box reach">
+  <div><p class="xs" style="margin-bottom: var(--s3)">Clients in 26 countries</p><ul class="c6 xs" id="geo"></ul></div>
+  <p class="note rise"><b>Reach</b>Most projects: United States, 66<br>Furthest client: New Zealand<br>4 continents</p>
+</section>
+
+<div class="box cut"><span class="xs dim">Projects</span><span class="hatch" aria-hidden="true"></span></div>
+<section class="w7" id="work">
+  <div class="box w7-head">
+    <h2 aria-label="Selected projects"><span class="big split" aria-hidden="true">Selected</span><span class="second split" aria-hidden="true">Projects.</span></h2>
+    <p class="tuck7 xs dim">20 projects<br>4 groups<br>6 case studies</p>
+  </div>
+  <div class="w6-body box">
+    <div id="lists"></div>
+    <aside class="panel6" id="panel" aria-live="polite"></aside>
+  </div>
+</section>
+
+<div class="box cut"><span class="xs dim">Client feedback</span><span class="hatch" aria-hidden="true"></span></div>
+<section class="fb" aria-label="Client feedback"><div class="box fb-head"><p class="xs dim">Drag or swipe for more reviews.</p></div><div class="fb-grid" id="fb-grid" tabindex="0" aria-label="Client reviews, scrolls sideways"></div></section>
+
+<section class="box ready" aria-labelledby="ready-h">
+  <h2 id="ready-h" aria-label="Ready when you are"><span class="big split" aria-hidden="true">Ready when</span><span class="big split" aria-hidden="true">you are.</span></h2>
+  <div class="row" id="ready-cta"></div>
+</section>
+
+<footer id="ft"></footer>
+<div class="globe-tip" id="tip" hidden></div>
+
+<script src="js/site-data.js"></script>
+<script src="js/site.js"></script>
+<script src="js/vendor/d3-array.min.js" defer></script>
+<script src="js/vendor/d3-geo.min.js" defer></script>
+<script src="js/vendor/topojson-client.min.js" defer></script>
+<script src="js/globe-dots.js" defer></script>
+<script src="js/globe.js" defer></script>
+<script src="js/fx.js" defer></script>
+</body>
+</html>
