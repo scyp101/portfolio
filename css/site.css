@@ -836,3 +836,6 @@ body.red-page {
 /* footer: the oversized  A926 sits fully above the copyright line (D119) */
 .ft7-end .big { margin-bottom: 0; line-height: .74; padding-bottom: var(--s3); }
 .ft7-base { position: relative; z-index: 2; background: var(--ink); }
+
+/* footer base: no tab background (D121) */
+.ft7-base { background: transparent; }

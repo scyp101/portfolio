@@ -215,7 +215,7 @@
     $('#about-cta').append(pill('See the projects', U.home + '#work', 'int', 'red'), pill('LinkedIn', LI, 'ext'));
     S.TIMELINE.forEach((t) => { const it = el('article', 'tl-item'); it.append(el('p', 'yr', t.year), el('h3', '', t.title), el('p', '', t.detail), el('span', 'kind', t.kind)); $('#track').append(it); });
     const brk = (s) => { const k = s.indexOf(', '); return k < 0 ? s : s.slice(0, k + 1) + '\n' + s.slice(k + 2); };
-    const tbl = (host, rows, cols) => rows.forEach((r) => { const d = el('div'); cols.forEach((c, i) => d.append(el('span', c, c === 'r' ? brk(r[i] || '') : (r[i] || '')))); $(host).append(d); });
+    const tbl = (host, rows, cols) => rows.forEach((r) => { const d = el('div'); cols.forEach((c, i) => d.append(el('span', c, c === 'r' && host === '#exp' ? brk(r[i] || '') : (r[i] || '')))); $(host).append(d); });
     tbl('#exp', A.experience.rows, ['y', 'r', 'd']);
     tbl('#rec', A.recognition.rows, ['y', 'r']);
     $('#band-cta').append(pill('See the projects', U.home + '#work', 'int', 'red'), pill('Get in touch', U.contact));

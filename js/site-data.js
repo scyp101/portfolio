@@ -1208,38 +1208,28 @@ var SITE = /*DATA*/{
    "rows": [
     [
      "2024 to now",
-     "Mechanical design engineer, Dynametrics Engineering Solutions (contract, remote)",
-     "Product CAD, manufacturing drawings, FEA and 3D printed prototypes for international clients."
+     "Mechanical Design Engineer, Dynametrics Engineering Solutions (Contract, Remote)",
+     "Product CAD, manufacturing drawings, FEA and 3D printed prototypes for international clients. Remote contract role since October 2024."
     ],
     [
      "2021 to now",
-     "Freelance mechanical designer (remote)",
-     "3D models, manufacturing drawings, prototypes and renders for small businesses and artists, 190+ projects in total."
+     "Freelance Mechanical Design Engineer, Self-Employed (Remote)",
+     "3D models, manufacturing drawings, prototypes and renders for small businesses and artists. 190+ projects delivered since 2021, for clients in 26 countries."
     ],
     [
      "2023 to 2024",
-     "Final year design project lead, DHA Suffa University",
-     "Led a 3 member team from concept to a field-tested cooling rig for rooftop solar PV."
-    ],
-    [
-     "2024",
-     "Summer Eco Internship, WWF Pakistan",
-     "Part of a 10 person team; documentation, a webinar for 35+ participants and a 6 minute documentary."
+     "Final Year Design Project Lead, DHA Suffa University",
+     "Led a 3 member team from concept to a field-tested cooling rig for rooftop solar PV. Ran the simulations and wrote the full 210 page report; grade A."
     ],
     [
      "2023",
-     "Aerospace engineering intern, Pakistan International Airlines",
-     "Aircraft maintenance on the Boeing 777, Airbus A320 and ATR 72."
+     "Aerospace Engineering Intern, Pakistan International Airlines (PIA)",
+     "Four weeks in aircraft maintenance on the Boeing 777, Airbus A320 and ATR 72, from July to August 2023."
     ],
     [
      "2022 to 2023",
-     "Virtual intern, ZIMCO International Corporation",
-     "8 week program on electrical distribution boxes, PLCnext and control panel components."
-    ],
-    [
-     "2022 to 2023",
-     "Founding member and EVP, ASHRAE DSU Student Branch",
-     "Grew the branch from 0 to 50+ members across 7+ sub-teams."
+     "Founding Member and EVP, ASHRAE DSU Student Branch",
+     "Helped found the university's ASHRAE student branch and grew it from 0 to 50+ members across 7+ sub-teams."
     ]
    ]
   },
@@ -1251,7 +1241,7 @@ var SITE = /*DATA*/{
    "rows": [
     [
      "2026",
-     "Registered Engineer, Pakistan Engineering Council"
+     "Registered Engineer, Pakistan Engineering Council (PEC)"
     ],
     [
      "2026",
@@ -1267,11 +1257,7 @@ var SITE = /*DATA*/{
     ],
     [
      "2024",
-     "Institution of Engineers Pakistan Gold Medal"
-    ],
-    [
-     "2024",
-     "Caterpillar Technicians for the World, first batch in Pakistan"
+     "Institution of Engineers Pakistan Gold Medal, DHA Suffa University"
     ]
    ]
   },
