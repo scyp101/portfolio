@@ -1,6 +1,7 @@
 # Safety net: this folder is the repo. Only site files belong here.
 *.md
 !README.md
+!CHANGELOG.md
 *.docx
 *.pdf
 .DS_Store

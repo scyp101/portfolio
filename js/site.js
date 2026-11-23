@@ -14,14 +14,22 @@
   const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\[([^\]]+)\]\(LINK:([a-z0-9-]+)\)/g, (m, t, slug) => `<a class="inl" href="${U.proj(slug)}">${t}</a>`);
   const P = (tag, cls, s) => { const n = el(tag, cls); n.innerHTML = rich(s); return n; };
   const BYSLUG = Object.fromEntries(S.PROJECTS.map((p) => [p.slug, p]));
+  /* Client words, verbatim: textContent only, a line break starts a new paragraph, empty lines are skipped. */
+  function reviewText(text) {
+    const box = el('div', 'rv-text');
+    text.split('\n').forEach((line) => { if (line.length && line.trim().length) { const q = document.createElement('p'); q.textContent = line; box.append(q); } });
+    return box;
+  }
 
   /* ---------- buttons ---------- */
+  const ICON = (d) => '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" focusable="false"><path d="' + d + '"/></svg>';
+  const ARROW = { int: ICON('M2.5 8h10.5M9 4l4 4-4 4'), back: ICON('M13.5 8H3M7 4L3 8l4 4'), ext: ICON('M4.5 11.5l7-7M6 4.5h5.5V10') };
   function pill(label, href, kind = 'int', extra = '') {
     const a = el('a', 'pill pressable ' + (kind === 'ext' ? '' : 'int ') + (kind === 'back' ? 'back ' : '') + extra); a.href = href; if (kind === 'ext') a.rel = 'noopener';
-    const ar = kind === 'ext' ? '↗' : kind === 'back' ? '←' : '→';
-    a.innerHTML = '<span class="pill-arrow" aria-hidden="true"><i></i><i></i></span><span class="pill-label"></span>';
+    const svg = ARROW[kind === 'ext' ? 'ext' : kind === 'back' ? 'back' : 'int'];
+    a.innerHTML = '<span class="pill-arrow" aria-hidden="true"><i>' + svg + '</i><i>' + svg + '</i></span><span class="pill-label"></span>';
     if (kind !== 'back') a.append(a.querySelector('.pill-arrow'));
-    a.querySelector('.pill-label').textContent = label; a.querySelectorAll('i').forEach((i) => { i.textContent = ar; });
+    a.querySelector('.pill-label').textContent = label;
     return a;
   }
   const pillSpan = (label, extra) => { const a = pill(label, '#', 'int', extra); const s = el('span', a.className); s.innerHTML = a.innerHTML; s.setAttribute('aria-hidden', 'true'); return s; };
@@ -43,7 +51,7 @@
     f.innerHTML = `<div class="box"><div class="ft7-grid">
         <div><div class="who7"><span class="nm">Kamil Siddiqui</span><span class="xs">Mechanical design engineer</span><span class="xs">Karachi, Pakistan</span></div><div class="cta"></div></div>
         <div><span class="xs dim">Pages</span><ul><li><a class="px xs" href="${U.home}#top">Home</a></li><li><a class="px xs" href="${U.home}#work">Projects</a></li><li><a class="px xs" href="${U.about}">About</a></li><li><a class="px xs" href="${U.contact}">Contact</a></li></ul></div>
-        <div><span class="xs dim">Elsewhere</span><ul><li><a class="px xs" href="${LI}" rel="noopener">LinkedIn</a></li><li><a class="px xs" href="mailto:${EMAIL}">Email</a></li></ul></div>
+        <div><span class="xs dim">Elsewhere</span><ul><li><a class="px xs" href="${LI}" rel="noopener">LinkedIn</a></li></ul></div>
         <div><span class="xs dim">Based in</span><ul><li class="xs">Karachi, Pakistan</li><li class="xs dim">24.86° N, 67.00° E</li><li class="xs">Local time <span class="khi-clock"></span></li></ul></div>
       </div>
       <div class="ft7-end"><p class="stamp xs dim">Selected projects<br>2023 to 2026</p><span class="big split" aria-hidden="true">©26</span></div></div>
@@ -123,20 +131,40 @@
     }
     document.querySelector('.plist a').dispatchEvent(new Event('mouseenter'));
     /* client feedback (verbatim reviews) */
-    (S.FEEDBACK || []).forEach((r) => {
-      const p = BYSLUG[r.slug]; const f = el('figure'); const bq = el('blockquote'); bq.append(el('p', '', r.text));
-      const cap = el('figcaption'); cap.append(r.by + (p ? ' · ' : '')); if (p) { const a = el('a', 'u', p.title); a.href = U.proj(p.slug); cap.append(a); }
-      f.append(bq, cap); $('#fb-grid').append(f);
+    (S.FEEDBACK || []).forEach((r, i) => {
+      const p = BYSLUG[r.slug]; const f = el('figure', 'rv'); f.dataset.rid = r.id;
+      const bq = el('blockquote', 'rv-clamp'); bq.id = 'rv-' + r.id; bq.append(reviewText(r.text));
+      const more = el('button', 'rv-more', 'Read more'); more.type = 'button'; more.setAttribute('aria-expanded', 'false'); more.setAttribute('aria-controls', bq.id); more.hidden = true;
+      more.addEventListener('click', () => { const open = f.classList.toggle('open'); more.setAttribute('aria-expanded', open); more.textContent = open ? 'Show less' : 'Read more'; });
+      const cap = el('figcaption'); cap.append(r.by + (p ? ' \u00b7 ' : '')); if (p) { const a = el('a', 'u', p.title); a.href = U.proj(p.slug); cap.append(a); }
+      f.append(bq, more, cap); $('#fb-grid').append(f);
     });
+    /* show "Read more" only where the text is actually cut */
+    const fit = () => document.querySelectorAll('#fb-grid .rv').forEach((f) => { if (f.classList.contains('open')) return; const b = f.querySelector('.rv-clamp'); f.querySelector('.rv-more').hidden = b.scrollHeight <= b.clientHeight + 2; });
+    fit(); addEventListener('resize', fit); document.fonts && document.fonts.ready.then(fit);
     (() => { const tr = $('#fb-grid'); let down = false, x0 = 0, s0 = 0;
-      tr.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch' || e.target.closest('a')) return; down = true; x0 = e.clientX; s0 = tr.scrollLeft; tr.classList.add('dragging'); tr.setPointerCapture(e.pointerId); });
+      tr.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch' || e.target.closest('a, button')) return; down = true; x0 = e.clientX; s0 = tr.scrollLeft; tr.classList.add('dragging'); tr.setPointerCapture(e.pointerId); });
       tr.addEventListener('pointermove', (e) => { if (down) tr.scrollLeft = s0 - (e.clientX - x0); });
       const up = () => { down = false; tr.classList.remove('dragging'); }; tr.addEventListener('pointerup', up); tr.addEventListener('pointercancel', up);
       tr.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') tr.scrollBy({ left: 360, behavior: 'smooth' }); if (e.key === 'ArrowLeft') tr.scrollBy({ left: -360, behavior: 'smooth' }); }); })();
     $('#ready-cta').append(pill('Get in touch', U.contact, 'int', 'red'), pill('LinkedIn', LI, 'ext'));
     /* globe: start after first paint, when the browser is idle */
-    const start = () => window.initGlobe && window.initGlobe($('#globe'), { style: 'glow', tip: $('#tip'), scale: .4, tilt: -24, lonOffset: 30, worldUrl: 'js/vendor/countries-110m.json', onCount: (x) => { $('#count').textContent = x; } });
+    const start = () => window.initGlobe && window.initGlobe($('#globe'), { style: 'glow', tip: $('#tip'), scale: .4, tilt: -24, lonOffset: 30, worldUrl: 'js/vendor/countries-110m.json' });
     window.GLOBE = G;
+    /* project count: "190" is in the HTML. When the line scrolls into view it counts up by the clock and always
+       ends on the real number; with reduced motion, or if anything fails, it simply stays at 190 (D133). */
+    (() => {
+      const n = $('#count'); if (!n) return; const end = parseInt(n.textContent, 10) || G.total;
+      if (REDUCE || !('IntersectionObserver' in window)) { n.textContent = end; return; }
+      const io = new IntersectionObserver((es) => {
+        if (!es[0].isIntersecting) return; io.disconnect();
+        const t0 = performance.now(), dur = 1400;
+        const step = (now) => { const k = Math.min(1, (now - t0) / dur); n.textContent = Math.round(end * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); else n.textContent = end; };
+        requestAnimationFrame(step);
+        setTimeout(() => { n.textContent = end; }, dur + 400); /* safety: always lands on the real number */
+      }, { threshold: .4 });
+      io.observe(n);
+    })();
     const go = () => ('requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 900 }) : setTimeout(start, 200));
     if (document.readyState === 'complete') go(); else addEventListener('load', go, { once: true });
   }
@@ -180,14 +208,12 @@
       });
       s.append(ol);
       sec('Result').append(P('p', '', p.result));
-      if (p.reviews) quote(p.reviews[0]);
       const rf = sec('Reflection', 'reflect'); rf.append(P('p', '', p.reflection));
     } else {
       sec('Brief').append(P('p', '', p.brief));
       if (p.constraints) sec('Constraints').append(P('p', '', p.constraints));
       const steps = p.process.length ? p.process : p.did; const s = sec(p.process.length ? 'Process' : 'What I did'); const ul = el('ul'); steps.forEach((x) => ul.append(P('li', '', x))); s.append(ul);
       sec('Result').append(P('p', '', p.result));
-      if (p.reviews) quote(p.reviews[0]);
     }
     /* figures (never for NDA or text-only) */
     if (!p.textOnly && !p.nda) {
@@ -198,19 +224,55 @@
       if (figs.children.length) { const h = sec('Figures'); h.append(figs); }
     }
     if (p.backlink) main.append(P('p', 'backlink rise', p.backlink));
+    /* client reviews: every review for this project, newest first (D128) */
+    if (p.reviews && p.reviews.length) {
+      const s = sec('Client reviews', 'reviews' + (p.reviews.length === 1 ? ' one' : ''));
+      const list = el('div', 'rv-list');
+      p.reviews.forEach((r) => { const f = el('figure', 'rv'); f.dataset.rid = r.id; const bq = el('blockquote'); bq.append(reviewText(r.text)); f.append(bq, el('figcaption', 'xs dim', r.by)); list.append(f); });
+      s.append(list);
+    }
     /* previous and next */
     const pn = el('nav', 'pn7'); pn.setAttribute('aria-label', 'More projects');
     const prev = S.PROJECTS[(idx - 1 + S.PROJECTS.length) % S.PROJECTS.length], next = S.PROJECTS[(idx + 1) % S.PROJECTS.length];
     const a1 = el('a', 'prev'); a1.href = U.proj(prev.slug); a1.append(el('span', 'xs dim', 'Previous project'), el('span', 't', prev.title), pillSpan('Previous', 'back'));
     const a2 = el('a', 'next'); a2.href = U.proj(next.slug); a2.append(el('span', 'xs dim', 'Next project'), el('span', 't', next.title), pillSpan('Next project', 'red'));
     pn.append(a1, a2); main.append(cut('More'), pn);
-    function quote(r) { const f = el('figure', 'q7 rise'); const bq = el('blockquote'); bq.append(el('p', '', r.text)); f.append(bq, el('figcaption', 'xs dim', r.by)); main.append(f); }
   }
 
   /* =================== ABOUT =================== */
   function about() {
     const A = S.ABOUT;
-    const intro = $('#intro'); A.intro.forEach((t, i) => intro.append(P('p', i === 0 ? 'lead rise' : 'rise', t)));
+    /* chapters: Kamil's 3 paragraphs, word for word; first sentence large, key phrases marked, at-a-glance side items (D142) */
+    const marked = (text, marks) => { const out = el('p', 'chap-text'); let rest = text;
+      while (rest.length) { let at = -1, hit = '';
+        (marks || []).forEach((m) => { const k = rest.indexOf(m); if (k >= 0 && (at < 0 || k < at)) { at = k; hit = m; } });
+        if (at < 0) { out.append(rest); break; }
+        out.append(rest.slice(0, at)); out.append(el('mark', '', hit)); rest = rest.slice(at + hit.length); }
+      return out; };
+    A.intro.forEach((text, i) => {
+      const c = A.chapters[i] || { label: '', marks: [] };
+      const k = text.indexOf('. '), first = k > 0 ? text.slice(0, k + 1) : text, rest = k > 0 ? text.slice(k + 2) : '';
+      const row = el('article', 'chap rise');
+      const lab = el('p', 'chap-label'); lab.append(el('span', 'dotm'), c.label); row.append(lab);
+      const body = el('div', 'chap-body'); body.append(el('p', 'chap-lead', first)); if (rest) body.append(marked(rest, c.marks)); row.append(body);
+      const side = el('aside', 'chap-side'); side.setAttribute('aria-label', c.label + ' at a glance');
+      if (c.figures) { const g = el('dl', 'chap-figs'); c.figures.forEach(([n, l]) => { const d = el('div'); d.append(el('dt', '', n), el('dd', '', l)); g.append(d); }); side.append(g); }
+      if (c.quotes) c.quotes.forEach((q) => { const f = el('p', 'chap-quote'); f.append('\u201C' + q + '\u201D'); side.append(f); });
+      if (c.quotes) side.append(el('p', 'chap-note', 'From client reviews'));
+      if (c.tags) { const u = el('ul', 'chap-tags'); c.tags.forEach((x) => u.append(el('li', '', x))); side.append(u); }
+      row.append(side); $('#intro').append(row);
+    });
+    /* tools (D141): data from SITE.TOOLS, frequency shown as a 3-step gauge with a key */
+    const T = S.TOOLS, LV = Object.fromEntries(T.scale.map((s, i) => [s.name, T.scale.length - i]));
+    const gauge = (f) => { const g = el('span', 'gauge'); g.setAttribute('aria-hidden', 'true'); for (let i = 1; i <= T.scale.length; i++) g.append(el('i', i <= (LV[f] || 0) ? 'on' : '')); return g; };
+    const key = $('#tools-key'); T.scale.forEach((s) => { const li = el('li'); li.append(gauge(s.name), el('b', '', s.name), el('span', '', s.means)); key.append(li); });
+    T.groups.forEach((g) => {
+      const card = el('section', 'tgroup rise'); card.append(el('h3', '', g.name));
+      const ul = el('ul'); g.tools.forEach((x) => { const li = el('li'); const nm = el('div', 'tname'); nm.append(el('span', '', x.name)); if (x.note) nm.append(el('small', '', x.note));
+        const fr = el('div', 'tfreq'); fr.append(gauge(x.freq), el('span', '', x.freq)); li.append(nm, fr); ul.append(li); });
+      card.append(ul); $('#tools-grid').append(card);
+    });
+    const also = $('#tools-also'); const ah = el('p', 'also-h'); ah.append(el('b', '', 'Also used'), el('span', '', T.alsoMeans)); also.append(ah); const au = el('ul'); T.also.forEach((x) => au.append(el('li', '', x))); also.append(au);
     A.facts.forEach(([k, v]) => { const d = el('div'); d.append(el('dt', 'xs dim', k), el('dd', '', v)); $('#facts').append(d); });
     $('#about-cta').append(pill('See the projects', U.home + '#work', 'int', 'red'), pill('LinkedIn', LI, 'ext'));
     S.TIMELINE.forEach((t) => { const it = el('article', 'tl-item'); it.append(el('p', 'yr', t.year), el('h3', '', t.title), el('p', '', t.detail), el('span', 'kind', t.kind)); $('#track').append(it); });
