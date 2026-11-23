@@ -1356,6 +1356,9 @@ body.red-page {
 .art .ar .tr { overflow: hidden; }
 .art .ao2 .tr { overflow: hidden; }
 
+/* AI page: every block shares one right edge, the full content width (D162) */
+body[data-slug="ai-and-automation"] #page .gl7, body[data-slug="ai-and-automation"] #page .more-line, body[data-slug="ai-and-automation"] #page .sec7,
+body[data-slug="ai-and-automation"] #page .cover7, body[data-slug="ai-and-automation"] #page .figs, body[data-slug="ai-and-automation"] #page .pn7 { max-width: none; }
 /* ===== AI page sections: the site's base style (square cards, red dash bullets) (D160) ===== */
 .cover7.wf-cover { aspect-ratio: auto; max-width: none; }
 .cover7.wf-cover::before, .cover7.wf-cover::after { display: none; }

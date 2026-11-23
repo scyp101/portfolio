@@ -2,7 +2,12 @@
 
 All notable changes to this site. Versions follow semantic versioning: major for a redesign or a change of structure, minor for new pages, projects or sections, patch for fixes and wording.
 
-## 1.2.0 (2026-11-23)
+## 1.2.1 (2026-11-24)
+
+### Fixed
+- AI and Automation page: the charts, the project details row and the "And 12 more" line now end at the same right edge.
+
+## 1.2.0 (2026-11-24)
 
 ### Added
 - AI and Automation page: how the vault and the AI workflow work, with the main workflow chart, the vault in numbers, a chart of how information moves inside it, the rules that keep it reliable, the skills in 3 groups, a multi-agent chart, the overnight build program and how the vault was built.
