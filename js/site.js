@@ -88,6 +88,90 @@
     } else box.append(el('div', 'ph6 xs dim', 'Image to come'));
     return box;
   }
+  /* workflow diagram v2 (D146): the vault (hub) in the centre; every node and labelled connection comes from SITE data.
+     Layout areas by role: sources left, hub centre, agents right, outputs below the agents. */
+  function flowDiagram(w) {
+    const steps = w.steps, conns = w.connections, hub = steps.find((s) => s.hub) || steps[0];
+    const box = el('div', 'wf2'); box.setAttribute('role', 'img');
+    box.setAttribute('aria-label', steps.map((s) => s.name + ': ' + s.detail).join(' ') + ' ' +
+      conns.map((c) => c.from.join(' and ') + ' to ' + c.to + (c.label ? ' (' + c.label + ')' : '')).join('. ') + '.');
+    const inner = el('div', 'wf2-in'); inner.setAttribute('aria-hidden', 'true');
+    const into = conns.find((c) => c.to === hub.name && c.from.length > 1);
+    const sources = into ? into.from : [];
+    const toHub = conns.filter((c) => c.to === hub.name && c.from.length === 1);
+    const fromHub = conns.filter((c) => c.from[0] === hub.name);
+    const agent = fromHub[0] ? fromHub[0].to : '';
+    const write = toHub.find((c) => c.from[0] === agent);
+    const outConn = conns.find((c) => c.from[0] === agent && c.to !== hub.name);
+    const outName = outConn ? outConn.to : '';
+    const loop = toHub.find((c) => c.from[0] === outName);
+    const node = (s, cls) => { const n = el('div', 'wf2-node ' + cls); n.append(el('span', 'wf-i', String(steps.indexOf(s) + 1).padStart(2, '0')), el('b', '', s.name));
+      if (s.hub) { const ul = el('ul'); s.detail.split(/(?<=\.)\s+/).forEach((x) => ul.append(el('li', '', x))); n.append(ul); } else n.append(el('span', 'wf-d', s.detail)); return n; };
+    const arrow = (dir, label, cls = '') => { const a = el('div', 'wf2-arr ' + dir + ' ' + cls); a.append(el('i')); if (label) a.append(el('span', '', label)); return a; };
+    sources.forEach((n, k) => inner.append(node(steps.find((s) => s.name === n), 'src s' + (k + 1))));
+    inner.append(arrow('to-hub', '', 'cin'));
+    inner.append(node(hub, 'hub'));
+    const rw = el('div', 'wf2-rw');
+    if (fromHub[0]) rw.append(arrow('right', fromHub[0].label, 'read'));
+    if (write) rw.append(arrow('left', write.label, 'write'));
+    inner.append(rw);
+    if (agent) inner.append(node(steps.find((s) => s.name === agent), 'agent'));
+    if (outConn) inner.append(arrow('down', outConn.label, 'ao'));
+    if (outName) inner.append(node(steps.find((s) => s.name === outName), 'out'));
+    if (loop) inner.append(arrow('left', loop.label, 'loop'));
+    box.append(inner);
+    return box;
+  }
+  /* ===== AI and Automation page (D155): approved text layout + the vault sections from SITE.VAULT ===== */
+  function aiPage(p) {
+    const V = S.VAULT, main = $('#page');
+    const sentences = (t) => t.split(/(?<=\.)\s+/);
+    const sec = (title, cls = '') => { const s = el('section', 'sec7 ai-sec rise ' + cls); s.append(el('h2', '', title)); main.append(s); return s; };
+    const byTitle = (x) => p.sections.find((s) => s.title === x);
+    const pts = (arr) => { const u = el('ul', 'ai-pts'); arr.forEach((x) => u.append(el('li', '', x))); return u; };
+    const card = (term, text) => { const ss = sentences(text); const c = el('div', 'ai-card');
+      c.append(el('p', 'nm', term)); if (ss.length > 1) c.append(el('p', 'key', ss[ss.length - 1])); c.append(el('p', 'det', ss.length > 1 ? ss.slice(0, -1).join(' ') : ss[0])); return c; };
+    /* intro */
+    const intro = sentences(byTitle('Intro').text);
+    const ib = sec('Intro', 'ai-intro'); ib.append(el('p', 'ai-lead', intro[0]), el('p', 'ai-rest', intro.slice(1).join(' ')));
+    /* tools built */
+    ['For engineering work', 'For everyday life'].forEach((ttl) => { const s = byTitle(ttl); const x = sec(ttl); const g = el('div', 'ai-cards' + (s.items.length > 2 ? ' c4' : '')); s.items.forEach((it) => g.append(card(it.term, it.text))); x.append(g); });
+    const more = byTitle('And 12 more'); const ml = el('p', 'more-line rise'); ml.append(el('b', '', more.title), ' ' + more.text); main.append(ml);
+    /* the vault: what it is */
+    const w = sec('The vault', 'ai-vault');
+    const q = el('p', 'ai-quote'); V.intro.quotes.forEach((x, i) => { if (i) q.append(el('span', 'or', 'and')); q.append(el('span', '', '“' + x + '”')); }); w.append(q);
+    const wg = el('div', 'ai-split'); const wl = pts([V.intro.started, V.intro.agents]);
+    const pb = el('div', 'ai-problem'); pb.append(el('b', '', 'The problem it solved'), el('p', '', V.intro.problem.charAt(0).toUpperCase() + V.intro.problem.slice(1))); wg.append(wl, pb); w.append(wg);
+    w.append(pts(sentences(byTitle('The vault').text)));
+    /* size */
+    const sz = sec('In numbers', 'ai-size'); const gr = el('dl', 'ai-figs');
+    V.size.forEach(([num, pre, lab]) => { const d = el('div'); const dt = el('dt'); if (pre) dt.append(el('small', '', pre)); dt.append(num); d.append(dt, el('dd', '', lab)); gr.append(d); }); sz.append(gr);
+    /* inside the vault chart + book notes */
+    const iv = sec('Inside the vault'); iv.insertAdjacentHTML('beforeend', window.VaultArt ? window.VaultArt.inside() : '');
+    iv.append(pts([V.book.never + ' ' + V.book.path.join(' '), 'Why: ' + V.book.why + '. ' + V.book.fixed, V.book.portable, V.book.dated]));
+    iv.append(el('p', 'ai-sub', 'Along the way'));
+    iv.append(pts(V.pipeline.notes));
+    /* rules */
+    const ru = sec('Rules that keep it reliable'); const rg = el('div', 'ai-rules');
+    V.rules.forEach(([a, b]) => { const c = el('div', 'ai-rule'); c.append(el('b', '', a)); if (b) c.append(el('span', '', b)); rg.append(c); }); ru.append(rg);
+    /* skills */
+    const sk = sec('Skills'); const skh = el('p', 'ai-rest'); skh.textContent = V.skills.total.charAt(0).toUpperCase() + V.skills.total.slice(1) + '. ' + V.skills.packaged; sk.append(skh);
+    const sg = el('div', 'ai-skills'); V.skills.groups.forEach(([name, count, items]) => { const c = el('div', 'ai-skg'); const h = el('p', 'h'); h.append(el('b', '', String(count)), el('span', '', name)); c.append(h, pts(items.map((x) => x.charAt(0).toUpperCase() + x.slice(1)))); sg.append(c); }); sk.append(sg);
+    /* multi-agent */
+    const ma = sec('Multi-agent work'); ma.insertAdjacentHTML('beforeend', window.VaultArt ? window.VaultArt.agents() : '');
+    /* overnight */
+    const O = V.overnight; const on = sec('The overnight build program'); const og = el('div', 'ai-split');
+    const of = el('dl', 'ai-figs small'); [['20', 'builds from July to November 2026'], ['4', 'versions of the build prompt'], ['48', 'checks in 9 groups, each tied to a vault rule']].forEach(([a, b]) => { const d = el('div'); d.append(el('dt', '', a), el('dd', '', b)); of.append(d); });
+    og.append(pts([O.what, O.wake, O.count, O.register, '2 builds maintain the system itself: ' + O.guard + ', and ' + O.checker]), of); on.append(og);
+    /* how it was built */
+    const B = V.built; const bu = sec('How it was built'); const tl = el('div', 'ai-built');
+    const r1 = el('div', 'ai-step'); r1.append(el('b', '', B.restructure)); const u1 = pts(B.steps.map((x) => x.charAt(0).toUpperCase() + x.slice(1))); r1.append(u1);
+    const r2 = el('div', 'ai-step'); r2.append(el('b', '', 'Later improvements, from the vault’s own records')); r2.append(pts(B.later.map((x) => x.charAt(0).toUpperCase() + x.slice(1))));
+    tl.append(r1, r2); bu.append(tl);
+    /* research workflow and the AI tools */
+    const rk = sec('Research and knowledge workflow'); rk.append(pts(sentences(byTitle('Research and knowledge workflow').text)));
+    rk.append(el('p', 'ai-sub', 'The AI tools behind it')); rk.append(pts(V.tools));
+  }
   function textCover(p) {
     const c = el('div', 'tcover');
     c.innerHTML = p.nda
@@ -106,7 +190,7 @@
     G.countries.forEach((c, i) => { const li = el('li', 'geo-item'); li.append(el('span', '', c.label), el('sup', '', c.count)); $('#geo').append(li); setTimeout(() => li.classList.add('on'), REDUCE ? 0 : 1300 + i * 150 + 900); });
     $('#about-cta').append(pill('More about me', U.about));
     /* project index */
-    const groups = ['case', 'design', 'analysis', 'systems'];
+    const groups = ['case', 'design', 'analysis', 'systems', 'personal'];
     groups.forEach((g) => {
       const list = S.PROJECTS.filter((p) => p.group === g); if (!list.length) return;
       const box = el('div', 'w6-group rise ' + g); box.append(dot(S.GROUPS[g] + ', ' + list.length));
@@ -127,7 +211,7 @@
       if (p.textOnly) { const w = el('div', 'img crop cover7'); w.style.marginTop = 'var(--s4)'; w.style.aspectRatio = '4 / 3'; w.append(textCover(p)); X.append(w); }
       else X.append(imgSlot(p, (p.images || [])[0]));
       X.append(el('p', 'res', p.headline));
-      X.append(P('p', '', p.problem || p.brief || ''), pill('View project', U.proj(p.slug), 'int', 'red'));
+      X.append(P('p', '', p.problem || p.brief || (p.sections && p.sections[0] && p.sections[0].text) || ''), pill('View project', U.proj(p.slug), 'int', 'red'));
     }
     document.querySelector('.plist a').dispatchEvent(new Event('mouseenter'));
     /* client feedback (verbatim reviews) */
@@ -177,8 +261,11 @@
     const cr = el('div', 'h6-crumb'); cr.style.marginTop = '0'; cr.append(dot(S.GROUPS[p.group]), el('span', 'xs dim', p.tag)); hero.append(cr);
     hero.append(el('h1', '', p.title), el('p', 'res', p.headline)); main.append(hero);
     const cover = el('div', 'cover7 crop rise');
-    if (p.textOnly) cover.append(textCover(p)); else { const c = imgSlot(p, p.images[0], 'img'); c.style.height = '100%'; cover.append(c); }
+    if (p.textOnly) cover.append(textCover(p)); else if (p.workflow && window.VaultArt) { cover.innerHTML = window.VaultArt.main(); }
+    else if (p.workflow) cover.append(flowDiagram(p.workflow)); else { const c = imgSlot(p, p.images[0], 'img'); c.style.height = '100%'; cover.append(c); }
+    if (p.workflow) cover.classList.add('wf-cover');
     main.append(cover);
+    if (p.link) { const lr = el('div', 'ph-link rise'); lr.append(pill(p.slug === 'rise-network' ? 'Visit the RISE landing page' : 'Visit', p.link, 'ext', 'red')); main.append(lr); }
     const gl = el('dl', 'gl7 rise');
     [['Year', p.year], ['Type', p.tag], ['Tools', p.tools.join(', ')], ['Client', p.client]].forEach(([k, v]) => { const d = el('div'); d.append(el('dt', 'xs dim', k), el('dd', '', v)); gl.append(d); });
     main.append(gl);
@@ -209,6 +296,16 @@
       s.append(ol);
       sec('Result').append(P('p', '', p.result));
       const rf = sec('Reflection', 'reflect'); rf.append(P('p', '', p.reflection));
+    } else if (p.kind === 'personal' && S.VAULT && p.slug === 'ai-and-automation') {
+      aiPage(p);
+    } else if (p.kind === 'personal') {
+      p.sections.forEach((s) => {
+        if (s.short) { const l = el('p', 'more-line rise'); l.append(el('b', '', s.title), ' ' + s.text); main.append(l); return; }
+        const x = sec(s.title);
+        if (s.items) { const ul = el('ul', s.items[0] && s.items[0].term ? 'termlist' : ''); s.items.forEach((it) => { const li = el('li'); if (it.term) { li.append(el('strong', '', it.term + ':')); li.append(' ' + it.text); } else li.textContent = it.text; ul.append(li); }); x.append(ul); }
+        else x.append(P('p', '', s.text));
+      });
+      if (p.link) { const lr = el('div', 'ph-link rise'); lr.append(pill('Visit the RISE landing page', p.link, 'ext')); main.append(lr); }
     } else {
       sec('Brief').append(P('p', '', p.brief));
       if (p.constraints) sec('Constraints').append(P('p', '', p.constraints));
@@ -218,7 +315,7 @@
     /* figures (never for NDA or text-only) */
     if (!p.textOnly && !p.nda) {
       const figs = el('div', 'figs');
-      (p.images || []).slice(1).filter((im) => !hidden(im) && !(p.slug === 'solar-pv-cooling' && im.file === '02.jpg')).forEach((im) => {
+      (p.images || []).slice(p.workflow ? 0 : 1).filter((im) => !hidden(im) && !(p.slug === 'solar-pv-cooling' && im.file === '02.jpg')).forEach((im) => {
         const f = el('figure', 'rise'); f.append(imgSlot(p, im), el('figcaption', 'xs dim', im.caption)); figs.append(f);
       });
       if (figs.children.length) { const h = sec('Figures'); h.append(figs); }

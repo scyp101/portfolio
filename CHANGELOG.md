@@ -2,6 +2,15 @@
 
 All notable changes to this site. Versions follow semantic versioning: major for a redesign or a change of structure, minor for new pages, projects or sections, patch for fixes and wording.
 
+## 1.2.0 (2026-11-23)
+
+### Added
+- AI and Automation page: how the vault and the AI workflow work, with the main workflow chart, the vault in numbers, a chart of how information moves inside it, the rules that keep it reliable, the skills in 3 groups, a multi-agent chart, the overnight build program and how the vault was built.
+- New group, Personal projects, with 2 pages: AI and Automation (with a workflow diagram centred on the vault, showing the AI agents reading facts from it and writing decisions, logs and new notes back, and a paragraph about the vault) and RISE Career and Learning Network (with a link to its landing page). The site now has 26 projects in 5 groups.
+
+### Changed
+- Project counts, group list and previous and next links follow the new order.
+
 ## 1.1.0 (2026-11-23)
 
 ### Added
